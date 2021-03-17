@@ -8,7 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="tools\**" />
+    <EmbeddedResource Remove="tools\**" />
+    <None Remove="tools\**" />
+    <Page Remove="tools\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LoggingLibrary\LoggingLibrary.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="echo trying to copy from $(SolutionDir)tools to $(SolutionDir)$(OutDir)&#xD;&#xA;xcopy &quot;$(SolutionDir)tools&quot; &quot;$(SolutionDir)$(OutDir)&quot; /s /e /d" />
+  </Target>
 
 </Project>
