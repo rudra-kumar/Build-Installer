@@ -5,8 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Build_Installer"
         mc:Ignorable="d"
-        Title="Build Installer" Height="450" Width="800">
+        Title="Build Installer" Height="200" Width="600" MinHeight="200" MinWidth="600">
     <Grid>
-
+        <StackPanel VerticalAlignment="Center">
+            <TextBox FontFamily="Helvetica" FontSize="15" Margin="40, 40, 40, 0" BorderBrush="Black" BorderThickness="4"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Browse" Margin="20" Height="30" Padding="5"/>
+                <Button Content="Install" Margin="20" Height="30" Padding="5"/>
+            </StackPanel>
+            <ProgressBar Value="50" Height="20" Margin="30,0,30, 0" Visibility="Visible"/>
+            <TextBlock Margin="30,0,30, 40">Progress Bar Text</TextBlock>
+        </StackPanel>
     </Grid>
 </Window>
