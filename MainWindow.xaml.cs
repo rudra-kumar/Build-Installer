@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using LoggingLibrary;
+using Build_Installer.ViewModels;
 
 namespace Build_Installer
 {
@@ -24,6 +25,7 @@ namespace Build_Installer
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
         }
     }
 }

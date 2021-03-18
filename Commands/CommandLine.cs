@@ -9,9 +9,9 @@ namespace Build_Installer.Commands
     class CommandLine : Command
     {
         private string _cmdCommand;
+        public string Output { get; private set; }
         private StringDictionary _additionalEnvVariables;
-
-        public string Output;
+        private const string ERROR_LEVEL = "& if ERRORLEVEL 1 echo error";
 
         public CommandLine(string cmdCommand, StringDictionary environmentVariables = null)
         {
@@ -26,7 +26,7 @@ namespace Build_Installer.Commands
             {
                 CreateNoWindow = true,
                 FileName = "cmd.exe",
-                Arguments = $"/C {_cmdCommand}",
+                Arguments = $"/C {_cmdCommand} {ERROR_LEVEL}",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -42,15 +42,12 @@ namespace Build_Installer.Commands
 
             if(!string.IsNullOrEmpty(errors))
             {
-                string errorMessage = $"Failed to execute {_cmdCommand}. Error {errors}";
-                Log.Error(errorMessage);
+                Log.Error(errors);
             }
 
-            // #TODO - Now since the eorr handling only happens in this place, the error message can contain the full command output
-            // Also add cmd command error handling to the execute method itself
             if(Output.Contains("error", StringComparison.OrdinalIgnoreCase))
             {
-                string errorMessage = $"Failed to execute {_cmdCommand}. Error {errors}";
+                string errorMessage = $"Failed to execute {_cmdCommand}. Output: {Output}";
                 Log.Error(errorMessage);
                 throw new Exception(errorMessage);
             }
