@@ -1,15 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Input;
 
 namespace Build_Installer.Commands
 {
-    abstract class Command
+    abstract class Command : ICommand
     {
         public void Execute()
         {
             OnExecute();
             ExecuteChildCommands();
+        }
+
+        public void Execute(object parameter)
+        {
+            Execute();
+        }
+#pragma warning disable CS0067
+        public event EventHandler CanExecuteChanged;
+#pragma warning restore CS0067
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
         }
 
         public int ChildCommandCount
@@ -30,6 +44,8 @@ namespace Build_Installer.Commands
 
         protected List<Command> ChildCommands = new List<Command>();
 
+        
+
         private void ExecuteChildCommands()
         {
             foreach (Command command in ChildCommands)
@@ -37,5 +53,8 @@ namespace Build_Installer.Commands
                 command.Execute();
             }
         }
+
+
+        
     }
 }

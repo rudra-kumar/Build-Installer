@@ -18,6 +18,10 @@
     <ProjectReference Include="..\LoggingLibrary\LoggingLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="echo trying to copy from $(SolutionDir)tools to $(SolutionDir)$(OutDir)&#xD;&#xA;xcopy &quot;$(SolutionDir)tools&quot; &quot;$(SolutionDir)$(OutDir)&quot; /s /e /d" />
   </Target>

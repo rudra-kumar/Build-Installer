@@ -15,7 +15,8 @@ namespace Build_Installer.Commands
 
         protected override void OnExecute()
         {
-            throw new NotImplementedException();
+            var commandLine = new CommandLine($"adb uninstall {_appID}");
+            commandLine.Execute();
         }
     }
 }

@@ -11,15 +11,15 @@ namespace Build_Installer.Commands
 
         public InstallAPK(string path)
         {
-            if (!path.EndsWith(".apk"))
-                throw new Exception("Path should end with .apk extension");
             _path = path;
-            if (!File.Exists(path))
-                throw new FileNotFoundException($"File at path {path} not found");
         }
 
         protected override void OnExecute()
         {
+            if (_path == null || !_path.EndsWith(".apk"))
+                throw new Exception("Path should end with .apk extension");
+            if (!File.Exists(_path))
+                throw new FileNotFoundException($"File at path {_path} not found");
             string platformToolsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "platform-tools");
             // #TODO - Perhaps this should be done when the application starts
             var adbEnvironmentVariables = new StringDictionary();
