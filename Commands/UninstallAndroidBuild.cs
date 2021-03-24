@@ -13,7 +13,12 @@ namespace Build_Installer.Commands
             _appID = applicationID;
         }
 
-        protected override void OnExecute()
+        public override bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        protected override void OnExecute(object parameter)
         {
             var commandLine = new CommandLine($"adb uninstall {_appID}");
             commandLine.Execute();

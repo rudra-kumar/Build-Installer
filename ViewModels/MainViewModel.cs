@@ -11,7 +11,7 @@ namespace Build_Installer.ViewModels
 {
     class MainViewModel : DependencyObject, IDisposable
     {
-        public ICommand InstallBuildCommand { get; private set; }
+        public RelayCommand InstallBuildCommand { get; private set; }
         public OpenFileCommand OpenFileCommand { get; private set; }
         public static readonly DependencyProperty BuildPathProperty = DependencyProperty.Register(nameof(BuildPath), typeof(string), typeof(MainViewModel));
         public string BuildPath 
@@ -41,11 +41,14 @@ namespace Build_Installer.ViewModels
 
 
         private SynchronizationContext _syncContext;
+        private InstallBuild _installBuild;
 
         public MainViewModel()
         {
             _syncContext = SynchronizationContext.Current;
-            InstallBuildCommand = new RelayCommand(InstallBuild);
+            _installBuild = new InstallBuild(BuildPath);
+            InstallBuildCommand = new RelayCommand(InstallBuild, _installBuild.CanExecute);
+            _installBuild.CanExecuteChanged += (param, args) => InstallBuildCommand.RaiseOnExecuteChanged();
             OpenFileCommand = new OpenFileCommand();
             OpenFileCommand.FileSelected += OnFileSelected;
         }
@@ -58,11 +61,11 @@ namespace Build_Installer.ViewModels
 
         private async void InstallBuild()
         {
-            InstallBuild installBuild = new InstallBuild(BuildPath);
-            installBuild.ProgressChanged += OnProgressChanged;
+            string buildPath = BuildPath;
             try
             {
-                await Task.Run( () => installBuild.Execute());
+                _installBuild.ProgressChanged += OnProgressChanged;
+                await Task.Run( () => _installBuild.Execute(buildPath));
                 MessageBox.Show("Installed Successfully");
             }
             catch (Exception e)
@@ -71,7 +74,7 @@ namespace Build_Installer.ViewModels
             }
             finally
             {
-                installBuild.ProgressChanged -= OnProgressChanged;
+                _installBuild.ProgressChanged -= OnProgressChanged;
                 BuildProgress = 0;
                 ProgressMessage = string.Empty;
             }

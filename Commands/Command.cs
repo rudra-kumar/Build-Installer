@@ -7,24 +7,17 @@ namespace Build_Installer.Commands
 {
     abstract class Command : ICommand
     {
-        public void Execute()
+        public void Execute(object parameter = null)
         {
-            OnExecute();
+            OnExecute(parameter);
             ExecuteChildCommands();
         }
 
-        public void Execute(object parameter)
-        {
-            Execute();
-        }
-#pragma warning disable CS0067
-        public event EventHandler CanExecuteChanged;
-#pragma warning restore CS0067
 
-        public bool CanExecute(object parameter)
-        {
-            return true;
-        }
+        public event EventHandler CanExecuteChanged;
+
+
+        public abstract bool CanExecute(object parameter);
 
         public int ChildCommandCount
         {
@@ -40,9 +33,15 @@ namespace Build_Installer.Commands
             }
         }
 
-        protected abstract void OnExecute();
+        protected abstract void OnExecute(object parameter);
 
         protected List<Command> ChildCommands = new List<Command>();
+
+        protected void RaiseCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, new EventArgs());
+            CommandManager.InvalidateRequerySuggested();
+        }
 
         
 

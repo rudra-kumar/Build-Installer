@@ -14,7 +14,12 @@ namespace Build_Installer.Commands
             _path = path;
         }
 
-        protected override void OnExecute()
+        public override bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        protected override void OnExecute(object parameter)
         {
             if (_path == null || !_path.EndsWith(".apk"))
                 throw new Exception("Path should end with .apk extension");
@@ -25,7 +30,8 @@ namespace Build_Installer.Commands
             var adbEnvironmentVariables = new StringDictionary();
             adbEnvironmentVariables.Add("Path", platformToolsPath);
 
-            ChildCommands.Add(new CommandLine($"adb install \"{_path}\"", adbEnvironmentVariables));
+            // #TODO - Remove the -r, that should happen outside this function 
+            ChildCommands.Add(new CommandLine($"adb install -r \"{_path}\"", adbEnvironmentVariables));
         }
     }
 }

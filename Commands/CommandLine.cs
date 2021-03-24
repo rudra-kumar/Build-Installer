@@ -19,7 +19,7 @@ namespace Build_Installer.Commands
             _additionalEnvVariables = environmentVariables ?? new StringDictionary();
         }
 
-        protected override void OnExecute()
+        protected override void OnExecute(object parameter)
         {
             var process = new Process();
             var processStartInfo = new ProcessStartInfo
@@ -68,6 +68,11 @@ namespace Build_Installer.Commands
                 else
                     currentVariables.Add(newKey, _additionalEnvVariables[newKey]);
             }
+        }
+
+        public override bool CanExecute(object parameter)
+        {
+            return true;
         }
     }
 }
