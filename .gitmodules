@@ -1,0 +1,3 @@
+[submodule "LoggingLibrary"]
+	path = LoggingLibrary
+	url = https://github.com/rudra-kumar/LoggingLibrary

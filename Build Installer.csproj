@@ -8,18 +8,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="BuildInstallerSetup\**" />
+    <Compile Remove="BuildInstallerTests\**" />
+    <Compile Remove="LoggingLibrary\**" />
     <Compile Remove="tools\**" />
+    <EmbeddedResource Remove="BuildInstallerSetup\**" />
+    <EmbeddedResource Remove="BuildInstallerTests\**" />
+    <EmbeddedResource Remove="LoggingLibrary\**" />
     <EmbeddedResource Remove="tools\**" />
+    <None Remove="BuildInstallerSetup\**" />
+    <None Remove="BuildInstallerTests\**" />
+    <None Remove="LoggingLibrary\**" />
     <None Remove="tools\**" />
+    <Page Remove="BuildInstallerSetup\**" />
+    <Page Remove="BuildInstallerTests\**" />
+    <Page Remove="LoggingLibrary\**" />
     <Page Remove="tools\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LoggingLibrary\LoggingLibrary.csproj" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Exceptions\" />
+    <ProjectReference Include="LoggingLibrary\LoggingLibrary.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
