@@ -5,18 +5,13 @@ using System.IO;
 
 namespace Build_Installer.Commands
 {
-    class InstallAPK : Command
+    class InstallAPK : StatelessCommand
     {
         private string _path;
 
         public InstallAPK(string path)
         {
             _path = path;
-        }
-
-        public override bool CanExecute(object parameter)
-        {
-            return true;
         }
 
         protected override void OnExecute(object parameter)
@@ -31,7 +26,8 @@ namespace Build_Installer.Commands
             adbEnvironmentVariables.Add("Path", platformToolsPath);
 
             // #TODO - Remove the -r, that should happen outside this function 
-            ChildCommands.Add(new CommandLine($"adb install -r \"{_path}\"", adbEnvironmentVariables));
+            var installCommand = new CMDCommand($"adb install -r \"{_path}\"", adbEnvironmentVariables);
+            installCommand.Execute(parameter);
         }
     }
 }

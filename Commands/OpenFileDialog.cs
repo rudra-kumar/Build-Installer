@@ -16,21 +16,13 @@ namespace Build_Installer.Commands
         }
     }
 
-    class OpenFileCommand : ICommand
+    class OpenFileDialog : StatefullCommand
     {
-#pragma warning disable CS0067
-        public event EventHandler CanExecuteChanged;
-#pragma warning restore CS0067
         public event EventHandler FileSelected;
 
-        public bool CanExecute(object parameter)
+        protected override void OnExecute(object parameter)
         {
-            return true;
-        }
-
-        public void Execute(object parameter)
-        {
-            var openFileDialog = new OpenFileDialog();
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.Filter = "Apk Files (.apk)|*.apk";
 
             Nullable<bool> result = openFileDialog.ShowDialog();

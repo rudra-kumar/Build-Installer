@@ -6,14 +6,14 @@ using System.Collections.Specialized;
 
 namespace Build_Installer.Commands
 {
-    class CommandLine : Command
+    class CMDCommand : StatelessCommand
     {
         private string _cmdCommand;
         public string Output { get; private set; }
         private StringDictionary _additionalEnvVariables;
         private const string ERROR_LEVEL = "& if ERRORLEVEL 1 echo error";
 
-        public CommandLine(string cmdCommand, StringDictionary environmentVariables = null)
+        public CMDCommand(string cmdCommand, StringDictionary environmentVariables = null)
         {
             _cmdCommand = cmdCommand;
             _additionalEnvVariables = environmentVariables ?? new StringDictionary();
@@ -42,13 +42,13 @@ namespace Build_Installer.Commands
 
             if(!string.IsNullOrEmpty(errors))
             {
-                Log.Error(errors);
+                LoggingService.Logger.Error(errors);
             }
 
             if(Output.Contains("error", StringComparison.OrdinalIgnoreCase))
             {
                 string errorMessage = $"Failed to execute {_cmdCommand}. Output: {Output}";
-                Log.Error(errorMessage);
+                LoggingService.Logger.Error(errorMessage);
                 throw new Exception(errorMessage);
             }
         }
@@ -70,9 +70,5 @@ namespace Build_Installer.Commands
             }
         }
 
-        public override bool CanExecute(object parameter)
-        {
-            return true;
-        }
     }
 }

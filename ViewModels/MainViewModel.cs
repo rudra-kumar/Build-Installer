@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Build_Installer.Commands;
+using LoggingLibrary;
 
 namespace Build_Installer.ViewModels
 {
     class MainViewModel : DependencyObject, IDisposable
     {
         public RelayCommand InstallBuildCommand { get; private set; }
-        public OpenFileCommand OpenFileCommand { get; private set; }
+        public OpenFileDialog OpenFileCommand { get; private set; }
         public static readonly DependencyProperty BuildPathProperty = DependencyProperty.Register(nameof(BuildPath), typeof(string), typeof(MainViewModel));
         public string BuildPath 
         {
@@ -45,11 +46,12 @@ namespace Build_Installer.ViewModels
 
         public MainViewModel()
         {
+            Bootstrapper.Init();
             _syncContext = SynchronizationContext.Current;
             _installBuild = new InstallBuild(BuildPath);
             InstallBuildCommand = new RelayCommand(InstallBuild, _installBuild.CanExecute);
             _installBuild.CanExecuteChanged += (param, args) => InstallBuildCommand.RaiseOnExecuteChanged();
-            OpenFileCommand = new OpenFileCommand();
+            OpenFileCommand = new OpenFileDialog();
             OpenFileCommand.FileSelected += OnFileSelected;
         }
 

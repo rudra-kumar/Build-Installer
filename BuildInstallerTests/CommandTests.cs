@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.IO;
 using LoggingLibrary;
 using System.Reflection;
+using Build_Installer;
 
 namespace BuildInstallerTests
 {
@@ -14,8 +15,8 @@ namespace BuildInstallerTests
         [TestMethod]
         public void CommandLineExecuteTest()
         {
-            CommandLine cmdCommand = new CommandLine("echo hello world");
-            cmdCommand.Execute();
+            CMDCommand cmdCommand = new CMDCommand("echo hello world");
+            cmdCommand.Execute(null);
             Assert.IsTrue(cmdCommand.Output.Contains("hello world"));
         }
 
@@ -28,21 +29,22 @@ namespace BuildInstallerTests
             {
                 { "Path", platformToolsPath }
             };
-            CommandLine adbDevicesCommand = new CommandLine("adb devices", additionalEnvironmentVariables);
-            adbDevicesCommand.Execute();
-            Log.Info(adbDevicesCommand.Output);
+            CMDCommand adbDevicesCommand = new CMDCommand("adb devices", additionalEnvironmentVariables);
+            adbDevicesCommand.Execute(null);
+            LoggingService.Logger.Info(adbDevicesCommand.Output);
         }
 
         [TestMethod]
         public void InstallApkTest()
         {
             InstallAPK installAPKCommand = new InstallAPK(@"C:\Users\rudra\Downloads\QuickShortcutMaker_v2.4.0_apkpure.com.apk");
-            installAPKCommand.Execute();
+            installAPKCommand.Execute(null);
         }
 
         [TestMethod]
         public void JreTest()
         {
+            Bootstrapper.Init();
             string jrePath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "jre", "bin");
             StringDictionary javaHomeVariable = new StringDictionary()
             {
@@ -50,14 +52,14 @@ namespace BuildInstallerTests
             };
             // #TODO - Environment variables can be set from here aswell 
 
-            System.Environment.SetEnvironmentVariable("path", jrePath);
-            CommandLine javaVersionTest = new CommandLine("java -version");
+            // System.Environment.SetEnvironmentVariable("path", jrePath);
+            CMDCommand javaVersionTest = new CMDCommand("java -version");
             bool hasJava = true;
             try
             {
-                javaVersionTest.Execute();
+                javaVersionTest.Execute(null);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 hasJava = false;
             }

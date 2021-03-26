@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Build_Installer.Commands
 {
-    class UninstallAndroidBuild : Command
+    class UninstallAndroidBuild : StatelessCommand
     {
         private string _appID;
 
@@ -13,15 +13,10 @@ namespace Build_Installer.Commands
             _appID = applicationID;
         }
 
-        public override bool CanExecute(object parameter)
-        {
-            return true;
-        }
-
         protected override void OnExecute(object parameter)
         {
-            var commandLine = new CommandLine($"adb uninstall {_appID}");
-            commandLine.Execute();
+            var commandLine = new CMDCommand($"adb uninstall {_appID}");
+            commandLine.Execute(parameter);
         }
     }
 }
