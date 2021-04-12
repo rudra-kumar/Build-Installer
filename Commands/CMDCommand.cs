@@ -10,13 +10,11 @@ namespace Build_Installer.Commands
     {
         private string _cmdCommand;
         public string Output { get; private set; }
-        private StringDictionary _additionalEnvVariables;
         private const string ERROR_LEVEL = "& if ERRORLEVEL 1 echo error";
 
-        public CMDCommand(string cmdCommand, StringDictionary environmentVariables = null)
+        public CMDCommand(string cmdCommand)
         {
             _cmdCommand = cmdCommand;
-            _additionalEnvVariables = environmentVariables ?? new StringDictionary();
         }
 
         protected override void OnExecute(object parameter)
@@ -32,7 +30,6 @@ namespace Build_Installer.Commands
                 UseShellExecute = false,
             };
             StringDictionary currentEnvVariables = processStartInfo.EnvironmentVariables;
-            AppendAdditionalEvnVariables(ref currentEnvVariables);
             process.StartInfo = processStartInfo;
             process.Start();
             process.WaitForExit();
@@ -40,35 +37,12 @@ namespace Build_Installer.Commands
             Output = process.StandardOutput.ReadToEnd();
             string errors = process.StandardError.ReadToEnd();
 
-            if(!string.IsNullOrEmpty(errors))
-            {
-                LoggingService.Logger.Error(errors);
-            }
-
             if(Output.Contains("error", StringComparison.OrdinalIgnoreCase))
             {
-                string errorMessage = $"Failed to execute {_cmdCommand}. Output: {Output}";
+                string errorMessage = $"Failed to execute {_cmdCommand}. Output: {Output} {errors}";
                 LoggingService.Logger.Error(errorMessage);
                 throw new Exception(errorMessage);
             }
         }
-
-        private void AppendAdditionalEvnVariables(ref StringDictionary currentVariables)
-        {
-            if (currentVariables == null) return;
-            foreach (string newKey in _additionalEnvVariables.Keys)
-            {
-                if (currentVariables.ContainsKey(newKey))
-                {
-                    string currentVariableValue = currentVariables[newKey];
-                    if (currentVariableValue.Contains(_additionalEnvVariables[newKey]))
-                        continue;
-                    currentVariables[newKey] = currentVariables[newKey] + $";{_additionalEnvVariables[newKey]}";
-                }
-                else
-                    currentVariables.Add(newKey, _additionalEnvVariables[newKey]);
-            }
-        }
-
     }
 }

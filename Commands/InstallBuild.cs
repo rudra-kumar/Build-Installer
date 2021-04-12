@@ -38,6 +38,7 @@ namespace Build_Installer.Commands
             ProgressChanged.Invoke(this, new ProgressChangedEventArgs(20, "Checking If app exists"));
             Thread.Sleep(1000);
             ProgressChanged.Invoke(this, new ProgressChangedEventArgs(40, "Installing Apk"));
+            
             // Get the name of the android package to be installed from the build path 
             // var cmdCommand = new CommandLine("Get the package name from build path");
             // cmdCommand.Execute();

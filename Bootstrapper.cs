@@ -23,7 +23,7 @@ namespace Build_Installer
         private static bool _isInitialized = false;
         public static void Init()
         {
-            Debug.Assert(!_isInitialized);
+            Debug.Assert(!_isInitialized, "Bootstrapper already initialized");
             LoggingService.Provide(new TraceLogger());
             SetupEnvironmentVariables();
             _isInitialized = true;

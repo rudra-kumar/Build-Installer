@@ -39,15 +39,11 @@ namespace Build_Installer.ViewModels
         public static readonly DependencyProperty ProgressMessageProperty =
             DependencyProperty.Register("ProgressMessage", typeof(string), typeof(MainViewModel), new PropertyMetadata(null));
 
-
-
-        private SynchronizationContext _syncContext;
         private InstallBuild _installBuild;
 
         public MainViewModel()
         {
             Bootstrapper.Init();
-            _syncContext = SynchronizationContext.Current;
             _installBuild = new InstallBuild(BuildPath);
             InstallBuildCommand = new RelayCommand(InstallBuild, _installBuild.CanExecute);
             _installBuild.CanExecuteChanged += (param, args) => InstallBuildCommand.RaiseOnExecuteChanged();
@@ -84,13 +80,11 @@ namespace Build_Installer.ViewModels
 
         private void OnProgressChanged(object obj, ProgressChangedEventArgs eventArgs)
         {
-            // Use the syncronization context to call the method on the main thread (UI thread) 
-            _syncContext.Post(o =>
+            ThreadingExtensions.DispatchOnUIThread( () =>
             {
                 BuildProgress = eventArgs.Progress;
                 ProgressMessage = eventArgs.Description;
-            },
-            null);
+            });
         }
 
         public void Dispose()

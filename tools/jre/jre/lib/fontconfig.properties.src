@@ -1,27 +1,27 @@
 #
 # 
-# Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
-# DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+# Copyright (c) 2003, 2018, Oracle and/or its affiliates. All rights reserved.
+# ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
 #
-# This code is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 2 only, as
-# published by the Free Software Foundation.  Oracle designates this
-# particular file as subject to the "Classpath" exception as provided
-# by Oracle in the LICENSE file that accompanied this code.
 #
-# This code is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-# version 2 for more details (a copy is included in the LICENSE file that
-# accompanied this code).
 #
-# You should have received a copy of the GNU General Public License version
-# 2 along with this work; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-# Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
-# or visit www.oracle.com if you need additional information or have any
-# questions.
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
 #
 
 # Version
@@ -38,9 +38,10 @@ allfonts.chinese-hkscs=MingLiU_HKSCS
 allfonts.chinese-ms950-extb=MingLiU-ExtB
 allfonts.devanagari=Mangal
 allfonts.dingbats=Wingdings
+allfonts.lucida=Lucida Sans Regular
 allfonts.symbol=Symbol
 allfonts.symbols=Segoe UI Symbol
-allfonts.thai=DokChampa
+allfonts.thai=Lucida Sans Regular
 allfonts.georgian=Sylfaen
 
 serif.plain.alphabetic=Times New Roman
@@ -236,13 +237,13 @@ sequence.dialoginput.x-windows-949=alphabetic,korean,dingbats,symbol
 
 sequence.allfonts.x-windows-874=alphabetic,thai,dingbats,symbol
 
-sequence.fallback=symbols,\
+sequence.fallback=lucida,symbols,\
                   chinese-ms950,chinese-hkscs,chinese-ms936,chinese-gb18030,\
                   japanese,korean,chinese-ms950-extb,chinese-ms936-extb,georgian
 
 # Exclusion Ranges
 
-exclusion.alphabetic=0700-1e9f,1f00-2017,2020-20ab,20ad-24ff,2501-2501,2503-250b,250d-250f,2511-2513,2515-2517,2519-251b,251d-2523,2525-252b,252d-2533,2535-253b,253d-254f,256d-f8ff
+exclusion.alphabetic=0700-1cff,1d80-1e9f,1f00-2017,2020-20ab,20ad-f8ff
 exclusion.chinese-gb18030=0390-03d6,2200-22ef,2701-27be
 exclusion.hebrew=0041-005a,0060-007a,007f-00ff,20ac-20ac
 
@@ -292,7 +293,7 @@ filename.Gulim=gulim.TTC
 filename.Batang=batang.TTC
 filename.GulimChe=gulim.TTC
 
-filename.DokChampa=dokchamp.ttf
+filename.Lucida_Sans_Regular=LucidaSansRegular.ttf
 filename.Mangal=MANGAL.TTF
 filename.Symbol=SYMBOL.TTF
 filename.Wingdings=WINGDING.TTF

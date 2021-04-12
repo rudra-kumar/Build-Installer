@@ -20,13 +20,9 @@ namespace Build_Installer.Commands
                 throw new Exception("Path should end with .apk extension");
             if (!File.Exists(_path))
                 throw new FileNotFoundException($"File at path {_path} not found");
-            string platformToolsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "platform-tools");
-            // #TODO - Perhaps this should be done when the application starts
-            var adbEnvironmentVariables = new StringDictionary();
-            adbEnvironmentVariables.Add("Path", platformToolsPath);
-
+            
             // #TODO - Remove the -r, that should happen outside this function 
-            var installCommand = new CMDCommand($"adb install -r \"{_path}\"", adbEnvironmentVariables);
+            var installCommand = new CMDCommand($"adb install -r \"{_path}\"");
             installCommand.Execute(parameter);
         }
     }

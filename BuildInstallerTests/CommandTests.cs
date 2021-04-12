@@ -1,10 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Build_Installer.Commands;
-using System.Collections.Specialized;
-using System.IO;
 using LoggingLibrary;
-using System.Reflection;
 using Build_Installer;
 
 namespace BuildInstallerTests
@@ -12,6 +9,20 @@ namespace BuildInstallerTests
     [TestClass]
     public class CommandTests
     {
+        [ClassInitialize]
+        public static void Init(TestContext context)
+        {
+            Bootstrapper.Init();
+        }
+
+        [TestMethod]
+        public void AdbCommandTest()
+        {
+            CMDCommand adbDevicesCommand = new CMDCommand("adb devices");
+            adbDevicesCommand.Execute(null);
+            LoggingService.Logger.Info(adbDevicesCommand.Output);
+        }
+
         [TestMethod]
         public void CommandLineExecuteTest()
         {
@@ -20,19 +31,7 @@ namespace BuildInstallerTests
             Assert.IsTrue(cmdCommand.Output.Contains("hello world"));
         }
 
-        [TestMethod]
-        public void AdbCommandTest()
-        {
-            // #TODO - Find a way to get the path of executing directory for the build installer project
-            string platformToolsPath = @"C:\dev\wpf\Build Installer\bin\Debug\netcoreapp3.1\platform-tools";
-            StringDictionary additionalEnvironmentVariables = new StringDictionary
-            {
-                { "Path", platformToolsPath }
-            };
-            CMDCommand adbDevicesCommand = new CMDCommand("adb devices", additionalEnvironmentVariables);
-            adbDevicesCommand.Execute(null);
-            LoggingService.Logger.Info(adbDevicesCommand.Output);
-        }
+        
 
         [TestMethod]
         public void InstallApkTest()
@@ -44,26 +43,19 @@ namespace BuildInstallerTests
         [TestMethod]
         public void JreTest()
         {
-            Bootstrapper.Init();
-            string jrePath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "jre", "bin");
-            StringDictionary javaHomeVariable = new StringDictionary()
-            {
-                {"Path", jrePath }
-            };
-            // #TODO - Environment variables can be set from here aswell 
-
-            // System.Environment.SetEnvironmentVariable("path", jrePath);
             CMDCommand javaVersionTest = new CMDCommand("java -version");
+            string errorMessage = string.Empty;
             bool hasJava = true;
             try
             {
                 javaVersionTest.Execute(null);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 hasJava = false;
+                errorMessage = e.Message;
             }
-            Assert.IsTrue(hasJava);
+            Assert.IsTrue(hasJava, $"Output: {javaVersionTest.Output} {errorMessage}");
         }
 
 
