@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="Build Installer" Language="1033" Version="0.0.3" Manufacturer="Rudra" UpgradeCode="40a1a09d-e02e-4dca-ac47-cf141668b363">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64"/>
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+
+		<Feature Id="ProductFeature" Title="BuildInstallerSetup" Level="1">
+      <ComponentGroupRef Id="ProductComponents"/>
+			<ComponentGroupRef Id="BinComponents" />
+		</Feature>
+	</Product>
+
+  <!--Specify folder structure of the application-->
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			
+      <!--Program files directory-->
+      <Directory Id="ProgramFiles64Folder">
+        <!--Path: Program Files/Build Installer -->
+        <Directory Id="INSTALLFOLDER" Name="Build Installer" >
+          <!-- Binary output Folder: Program Files/Build Installer/tools -->
+          <Directory Id="Bin_Dir_Ref"/>
+        </Directory>
+			</Directory>
+      
+      <!--Windows start menu list-->
+      <Directory Id="ProgramMenuFolder" Name="Build Installer"/>
+
+      <Directory Id="DesktopFolder"/>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			 
+      <!--This referes to the component containing the executable and shortcuts to that executable-->
+      <!--<Component Id="ProductComponent" Guid="c535e842-32cf-4910-9b5c-88d1da07b713">
+        --><!--<File Source="$(var.Build Installer.TargetDir)Build Installer.exe" KeyPath="yes">
+          <Shortcut Id="StartMenuShortcutRef" Name="Build Installer" Directory="ProgramMenuFolder" Advertise="yes"/>
+          <Shortcut Id="DesktopShortcutRef" Name="Build Installer" Directory="DesktopFolder" Advertise="yes" />
+        </File>--><!--
+			</Component>-->
+      
+      <!--This component defines how th eapplication will be uninstalled-->
+      <Component Id="UninstallComponentRef" Guid="d4be8821-518f-44dc-8d66-21356ddefc96">
+        <Shortcut Id="StartMenuShortcutRef" Name="Build Installer" Directory="ProgramMenuFolder" Target="[#fil4FDAF3C86F2975AD3100121EB786544F]" WorkingDirectory="INSTALLFOLDER" />
+        <RemoveFolder Id="RemoveProgramMenuFolderRef" Directory="ProgramMenuFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Type="string" Value="" KeyPath="yes" />
+      </Component>
+      
+      
+		</ComponentGroup>
+	</Fragment>
+</Wix>
