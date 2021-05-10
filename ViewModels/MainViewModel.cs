@@ -41,6 +41,18 @@ namespace Build_Installer.ViewModels
 
         private InstallBuild _installBuild;
 
+
+
+        public string ErrorMessage
+        {
+            get { return (string)GetValue(ErrorMessageProperty); }
+            set { SetValue(ErrorMessageProperty, value); }
+        }
+        public static readonly DependencyProperty ErrorMessageProperty =
+            DependencyProperty.Register(nameof(ErrorMessage), typeof(string), typeof(MainViewModel));
+
+
+
         public MainViewModel()
         {
             Bootstrapper.Init();
@@ -69,6 +81,7 @@ namespace Build_Installer.ViewModels
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
+                ErrorMessage = e.Message;
             }
             finally
             {
