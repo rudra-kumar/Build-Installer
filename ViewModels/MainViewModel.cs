@@ -43,13 +43,13 @@ namespace Build_Installer.ViewModels
 
 
 
-        public string ErrorMessage
+        public MessageDialogViewModel Message
         {
-            get { return (string)GetValue(ErrorMessageProperty); }
+            get { return (MessageDialogViewModel)GetValue(ErrorMessageProperty); }
             set { SetValue(ErrorMessageProperty, value); }
         }
         public static readonly DependencyProperty ErrorMessageProperty =
-            DependencyProperty.Register(nameof(ErrorMessage), typeof(string), typeof(MainViewModel));
+            DependencyProperty.Register(nameof(Message), typeof(MessageDialogViewModel), typeof(MainViewModel));
 
 
 
@@ -61,6 +61,7 @@ namespace Build_Installer.ViewModels
             _installBuild.CanExecuteChanged += (param, args) => InstallBuildCommand.RaiseOnExecuteChanged();
             OpenFileCommand = new OpenFileDialog();
             OpenFileCommand.FileSelected += OnFileSelected;
+            Message = new MessageDialogViewModel();
         }
 
         private void OnFileSelected(object sender, EventArgs eventArgs)
@@ -80,8 +81,7 @@ namespace Build_Installer.ViewModels
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
-                ErrorMessage = e.Message;
+                Message.Message = e.Message;
             }
             finally
             {

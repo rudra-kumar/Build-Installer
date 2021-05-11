@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -7,22 +8,47 @@ using Build_Installer.Commands;
 
 namespace Build_Installer.ViewModels
 {
-    class MessageDialogViewModel : DependencyObject
+    class MessageDialogViewModel : INotifyPropertyChanged
     {
-        public string Message
-        {
-            get { return (string)GetValue(MessageProperty); }
-            set { SetValue(MessageProperty, value); }
+        private string _message;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Message {
+            get => _message;
+            
+            set
+            {
+                if (string.Equals(value, _message))
+                    return;
+                _message = value;
+
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Message)));
+
+                if (string.IsNullOrEmpty(_message))
+                    IsVisible = false;
+                else
+                    IsVisible = true;
+            }
         }
 
-        public static readonly DependencyProperty MessageProperty =
-            DependencyProperty.Register(nameof(Message), typeof(string), typeof(MessageDialogViewModel));
+        private bool _isVisible;
+        public bool IsVisible {
+            get => _isVisible;
+            set
+            {
+                if (_isVisible == value)
+                    return;
+                _isVisible = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsVisible)));
+            }
+        }
 
         public ICommand ClearMessageCommand { get; private set; }
 
         public MessageDialogViewModel()
         {
-            ClearMessageCommand = new ClearMessageCommand(() =>
+            ClearMessageCommand = new RelayCommand(() =>
             {
                 Message = string.Empty;
             });

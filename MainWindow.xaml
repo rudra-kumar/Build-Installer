@@ -7,19 +7,9 @@
         mc:Ignorable="d"
         Title="Build Installer" Height="200" Width="600" MinHeight="200" MinWidth="600"
         x:Name="MainElement">
-
-    <Window.Resources>
-        <Style x:Key="MessageDialogStyle">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding DataContext.ErrorMessage, TargetNullValue='', ElementName=MainElement}" Value="">
-                    <Setter Property="local:MessageDialog.Visibility" Value="Hidden"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </Window.Resources>
     
     <Grid>
-        <local:MessageDialog Style="{StaticResource MessageDialogStyle}" Margin="35,10" Message="{Binding Path=DataContext.ErrorMessage, Mode=TwoWay, ElementName=MainElement}" />
+        <UserControl Margin="35,10" Content="{Binding ErrorMessage}"/>
         <StackPanel Panel.ZIndex="-1" VerticalAlignment="Center">
             <TextBox FontFamily="Helvetica" FontSize="15" Margin="40, 40, 40, 0" BorderBrush="Black" BorderThickness="4" Text="{Binding Path=BuildPath}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

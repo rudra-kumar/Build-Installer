@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              x:Name="MessageDialogBox"
-             >
+             Visibility="{Binding Path=IsVisible, Converter={StaticResource BoolToVisibility}}">
     <Grid>
         <Border Background="AliceBlue" BorderBrush="Black" BorderThickness="2.0" CornerRadius="20">
             <DockPanel Margin="5">
@@ -18,11 +18,7 @@
                     <Button Background="Transparent" FontWeight="Bold" Command="{Binding ClearMessageCommand}">OK</Button>
                 </Border>
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <TextBlock x:Name="MessageTextBlock">
-                        <TextBlock.Text>
-                            <Binding ElementName="MessageDialogBox" Path="Message" TargetNullValue="" />
-                        </TextBlock.Text>
-                    </TextBlock>
+                    <TextBlock x:Name="MessageTextBlock" Text="{Binding Path=Message}"/>
                 </ScrollViewer>
             </DockPanel>
         </Border>

@@ -27,7 +27,7 @@ namespace Build_Installer.Commands
             _commandAction.Invoke();
         }
 
-        public RelayCommand(Action commandAction, Func<object, bool> canExecuteAction)
+        public RelayCommand(Action commandAction, Func<object, bool> canExecuteAction = null)
         {
             _commandAction = commandAction;
             _canExecuteAction = canExecuteAction;
