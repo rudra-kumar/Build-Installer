@@ -5,6 +5,8 @@ using LoggingLibrary;
 using Build_Installer.Loggers;
 using System.Diagnostics;
 using System.Collections;
+using SharpAdbClient;
+using System.IO;
 
 namespace Build_Installer
 {
@@ -17,7 +19,8 @@ namespace Build_Installer
         private static List<EnvironmentVariable> _environmentVariables = new List<EnvironmentVariable>
         {
             new EnvironmentVariable( "Path",  Constants.JrePath),
-            new EnvironmentVariable( "Path", Constants.PlatformToolsPath)
+            new EnvironmentVariable( "Path", Constants.PlatformToolsPath),
+            new EnvironmentVariable( "Path", Constants.BuildToolsPath)
         };
 
         private static bool _isInitialized = false;
@@ -26,6 +29,8 @@ namespace Build_Installer
             Debug.Assert(!_isInitialized, "Bootstrapper already initialized");
             LoggingService.Provide(new TraceLogger());
             SetupEnvironmentVariables();
+            var adb = new AdbServer();
+            var result = adb.StartServer(Constants.AdbPath, restartServerIfNewer: false);
             _isInitialized = true;
         }
 

@@ -34,6 +34,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="SharpAdbClient" Version="2.3.23" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="LoggingLibrary\LoggingLibrary.csproj" />
   </ItemGroup>
 

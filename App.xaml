@@ -8,9 +8,14 @@
     <Application.Resources>
         <ResourceDictionary>
             <converters:BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
-            <DataTemplate DataType="{x:Type vm:MessageDialogViewModel}">
+            <DataTemplate DataType="{x:Type vm:MessageDialogVM}">
                 <local:MessageDialog />
             </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:CancellableMessageDialogVM}">
+                <local:CancellableMessageDialog />
+            </DataTemplate>
+                
             <Style TargetType="Button" />
         </ResourceDictionary>
     </Application.Resources>

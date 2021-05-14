@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,9 +11,10 @@ using LoggingLibrary;
 
 namespace Build_Installer.ViewModels
 {
-    class MainViewModel : DependencyObject, IDisposable
+    // #TODO - Update to View Model Base class
+    class MainViewModel : DependencyObject, IDisposable, INotifyPropertyChanged, IErrorHandler
     {
-        public RelayCommand InstallBuildCommand { get; private set; }
+        public RelayCommandAsync InstallBuildCommand { get; private set; }
         public OpenFileDialog OpenFileCommand { get; private set; }
         public static readonly DependencyProperty BuildPathProperty = DependencyProperty.Register(nameof(BuildPath), typeof(string), typeof(MainViewModel));
         public string BuildPath 
@@ -39,29 +41,53 @@ namespace Build_Installer.ViewModels
         public static readonly DependencyProperty ProgressMessageProperty =
             DependencyProperty.Register("ProgressMessage", typeof(string), typeof(MainViewModel), new PropertyMetadata(null));
 
-        private InstallBuild _installBuild;
+        private InstallationService _installationService;
 
 
 
-        public MessageDialogViewModel Message
+        public MessageDialogVM Message
         {
-            get { return (MessageDialogViewModel)GetValue(ErrorMessageProperty); }
+            get { return (MessageDialogVM)GetValue(ErrorMessageProperty); }
             set { SetValue(ErrorMessageProperty, value); }
         }
         public static readonly DependencyProperty ErrorMessageProperty =
-            DependencyProperty.Register(nameof(Message), typeof(MessageDialogViewModel), typeof(MainViewModel));
+            DependencyProperty.Register(nameof(Message), typeof(MessageDialogVM), typeof(MainViewModel));
 
 
+        private CancellableMessageDialogVM _cancellableMessageDialogVM;
+        public CancellableMessageDialogVM CancellableMessageDialog
+        {
+            get => _cancellableMessageDialogVM;
+            set
+            {
+                _cancellableMessageDialogVM = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CancellableMessageDialog)));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public MainViewModel()
         {
             Bootstrapper.Init();
-            _installBuild = new InstallBuild(BuildPath);
-            InstallBuildCommand = new RelayCommand(InstallBuild, _installBuild.CanExecute);
-            _installBuild.CanExecuteChanged += (param, args) => InstallBuildCommand.RaiseOnExecuteChanged();
+            _installationService = new InstallationService(OnUserPrompt);
+            InstallBuildCommand = new RelayCommandAsync(this, InstallBuild);
             OpenFileCommand = new OpenFileDialog();
             OpenFileCommand.FileSelected += OnFileSelected;
-            Message = new MessageDialogViewModel();
+            Message = new MessageDialogVM();
+        }
+
+        private async Task<bool> OnUserPrompt(string message)
+        {
+            bool userPressedOk = false;
+            CancellableMessageDialog = new CancellableMessageDialogVM(
+                "Error",
+                message,
+                () => userPressedOk = true,
+                () => userPressedOk = false
+                );
+            await CancellableMessageDialog.AwaitResponse();
+            return userPressedOk;
         }
 
         private void OnFileSelected(object sender, EventArgs eventArgs)
@@ -70,14 +96,14 @@ namespace Build_Installer.ViewModels
             BuildPath = fileSelectedArgs.FilePath;
         }
 
-        private async void InstallBuild()
+        private async Task InstallBuild()
         {
             string buildPath = BuildPath;
             try
             {
-                _installBuild.ProgressChanged += OnProgressChanged;
-                await Task.Run( () => _installBuild.Execute(buildPath));
-                MessageBox.Show("Installed Successfully");
+                _installationService.ProgressChanged += OnProgressChanged;
+                await Task.Run(() => _installationService.InstallBuild(buildPath));
+                Message.Message = "Installation Complete";
             }
             catch (Exception e)
             {
@@ -85,13 +111,13 @@ namespace Build_Installer.ViewModels
             }
             finally
             {
-                _installBuild.ProgressChanged -= OnProgressChanged;
+                _installationService.ProgressChanged -= OnProgressChanged;
                 BuildProgress = 0;
                 ProgressMessage = string.Empty;
             }
         }
 
-        private void OnProgressChanged(object obj, ProgressChangedEventArgs eventArgs)
+        private void OnProgressChanged(object obj, Commands.ProgressChangedEventArgs eventArgs)
         {
             ThreadingExtensions.DispatchOnUIThread( () =>
             {
@@ -103,6 +129,11 @@ namespace Build_Installer.ViewModels
         public void Dispose()
         {
             OpenFileCommand.FileSelected -= OnFileSelected;
+        }
+
+        public void Handle(Exception exception)
+        {
+            Message.Message = exception.Message;
         }
     }
 }

@@ -10,6 +10,7 @@
     
     <Grid>
         <UserControl Margin="35,10" Content="{Binding Message}"/>
+        <UserControl Margin="35, 10" Content="{Binding CancellableMessageDialog}"/>
         <StackPanel Panel.ZIndex="-1" VerticalAlignment="Center">
             <TextBox FontFamily="Helvetica" FontSize="15" Margin="40, 40, 40, 0" BorderBrush="Black" BorderThickness="4" Text="{Binding Path=BuildPath}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
