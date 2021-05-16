@@ -36,19 +36,16 @@
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
 			 
       <!--This referes to the component containing the executable and shortcuts to that executable-->
-      <!--<Component Id="ProductComponent" Guid="c535e842-32cf-4910-9b5c-88d1da07b713">
-        --><!--<File Source="$(var.Build Installer.TargetDir)Build Installer.exe" KeyPath="yes">
-          <Shortcut Id="StartMenuShortcutRef" Name="Build Installer" Directory="ProgramMenuFolder" Advertise="yes"/>
-          <Shortcut Id="DesktopShortcutRef" Name="Build Installer" Directory="DesktopFolder" Advertise="yes" />
-        </File>--><!--
-			</Component>-->
+      <Component Id="ProductComponent" Guid="c535e842-32cf-4910-9b5c-88d1da07b713">
+        <Shortcut Id="StartMenuShortcutRef" Name="Build Installer" Directory="ProgramMenuFolder" Target="[#fil4FDAF3C86F2975AD3100121EB786544F]" WorkingDirectory="INSTALLFOLDER" />
+        <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+        <RemoveFolder Id="RemoveProgramMenuFolderRef" Directory="ProgramMenuFolder" On="uninstall" />
+			</Component>
       
       <!--This component defines how th eapplication will be uninstalled-->
-      <Component Id="UninstallComponentRef" Guid="d4be8821-518f-44dc-8d66-21356ddefc96">
-        <Shortcut Id="StartMenuShortcutRef" Name="Build Installer" Directory="ProgramMenuFolder" Target="[#fil4FDAF3C86F2975AD3100121EB786544F]" WorkingDirectory="INSTALLFOLDER" />
-        <RemoveFolder Id="RemoveProgramMenuFolderRef" Directory="ProgramMenuFolder" On="uninstall" />
-        <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Type="string" Value="" KeyPath="yes" />
-      </Component>
+      <!--<Component Id="UninstallComponentRef" Guid="d4be8821-518f-44dc-8d66-21356ddefc96">
+        
+      </Component>-->
       
       
 		</ComponentGroup>

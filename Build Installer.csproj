@@ -13,18 +13,22 @@
     <Compile Remove="BuildInstallerSetup\**" />
     <Compile Remove="BuildInstallerTests\**" />
     <Compile Remove="LoggingLibrary\**" />
+    <Compile Remove="madb\**" />
     <Compile Remove="tools\**" />
     <EmbeddedResource Remove="BuildInstallerSetup\**" />
     <EmbeddedResource Remove="BuildInstallerTests\**" />
     <EmbeddedResource Remove="LoggingLibrary\**" />
+    <EmbeddedResource Remove="madb\**" />
     <EmbeddedResource Remove="tools\**" />
     <None Remove="BuildInstallerSetup\**" />
     <None Remove="BuildInstallerTests\**" />
     <None Remove="LoggingLibrary\**" />
+    <None Remove="madb\**" />
     <None Remove="tools\**" />
     <Page Remove="BuildInstallerSetup\**" />
     <Page Remove="BuildInstallerTests\**" />
     <Page Remove="LoggingLibrary\**" />
+    <Page Remove="madb\**" />
     <Page Remove="tools\**" />
   </ItemGroup>
 
@@ -34,11 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpAdbClient" Version="2.3.23" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="LoggingLibrary\LoggingLibrary.csproj" />
+    <ProjectReference Include="madb\SharpAdbClient\SharpAdbClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>
