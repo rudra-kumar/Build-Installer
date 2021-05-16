@@ -1,3 +1,6 @@
 [submodule "LoggingLibrary"]
 	path = LoggingLibrary
 	url = https://github.com/rudra-kumar/LoggingLibrary
+[submodule "madb"]
+	path = madb
+	url = https://github.com/rudra-kumar/madb.git
