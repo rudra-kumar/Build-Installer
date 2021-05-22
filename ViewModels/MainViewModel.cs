@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using Build_Installer.Commands;
 using LoggingLibrary;
+using SharpAdbClient;
 
 namespace Build_Installer.ViewModels
 {
@@ -17,7 +19,7 @@ namespace Build_Installer.ViewModels
         public RelayCommandAsync InstallBuildCommand { get; private set; }
         public OpenFileDialog OpenFileCommand { get; private set; }
         public static readonly DependencyProperty BuildPathProperty = DependencyProperty.Register(nameof(BuildPath), typeof(string), typeof(MainViewModel));
-        public string BuildPath 
+        public string BuildPath
         {
             get => (string)GetValue(BuildPathProperty);
             set => SetValue(BuildPathProperty, value);
@@ -41,7 +43,7 @@ namespace Build_Installer.ViewModels
         public static readonly DependencyProperty ProgressMessageProperty =
             DependencyProperty.Register("ProgressMessage", typeof(string), typeof(MainViewModel), new PropertyMetadata(null));
 
-        private InstallationService _installationService;
+        private AndroidBuildInstaller _installationService;
 
 
 
@@ -55,6 +57,8 @@ namespace Build_Installer.ViewModels
 
 
         private CancellableMessageDialogVM _cancellableMessageDialogVM;
+        
+
         public CancellableMessageDialogVM CancellableMessageDialog
         {
             get => _cancellableMessageDialogVM;
@@ -66,15 +70,30 @@ namespace Build_Installer.ViewModels
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        
+        private DevicesViewModel _devicesViewModel;
+        public DevicesViewModel DevicesViewModel 
+        {
+            get => _devicesViewModel;
+            set 
+            {
+                _devicesViewModel = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DevicesViewModel)));
+            }
+        }
 
         public MainViewModel()
         {
             Bootstrapper.Init();
-            _installationService = new InstallationService(OnUserPrompt);
+            AdbClient adbClient = new AdbClient();
+            InstallationService.Provide(adbClient);
+            var deviceMonitor = new DeviceMonitor(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)));
+            deviceMonitor.Start();
+            _installationService = new AndroidBuildInstaller(OnUserPrompt);
             InstallBuildCommand = new RelayCommandAsync(this, InstallBuild);
             OpenFileCommand = new OpenFileDialog();
             OpenFileCommand.FileSelected += OnFileSelected;
-            Message = new MessageDialogVM();
+            DevicesViewModel = new DevicesViewModel(adbClient, deviceMonitor);
         }
 
         private async Task<bool> OnUserPrompt(string message)
@@ -102,7 +121,6 @@ namespace Build_Installer.ViewModels
             try
             {
                 _installationService.ProgressChanged += OnProgressChanged;
-                await Task.Run(() => _installationService.InstallBuild(buildPath));
                 Message.Message = "Installation Complete";
             }
             catch (Exception e)
@@ -117,13 +135,13 @@ namespace Build_Installer.ViewModels
             }
         }
 
-        private void OnProgressChanged(object obj, Commands.ProgressChangedEventArgs eventArgs)
+        private void OnProgressChanged(object obj, ProgressChangedEventArgs eventArgs)
         {
-            ThreadingExtensions.DispatchOnUIThread( () =>
-            {
-                BuildProgress = eventArgs.Progress;
-                ProgressMessage = eventArgs.Description;
-            });
+            ThreadingExtensions.DispatchOnUIThread(() =>
+           {
+               BuildProgress = eventArgs.Progress;
+               ProgressMessage = eventArgs.Description;
+           });
         }
 
         public void Dispose()

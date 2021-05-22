@@ -11,4 +11,10 @@ namespace Build_Installer.Commands
         Task ExecuteAsync();
         bool CanExecute();
     }
+
+    interface ICommandAsync<T> : ICommand
+    {
+        Task ExecuteAsync(T parameter);
+        bool CanExecute(T parameter);
+    }
 }

@@ -5,30 +5,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Build_Installer"
         mc:Ignorable="d"
-        Title="Build Installer" Height="200" Width="600" MinHeight="200" MinWidth="600"
+        Title="Build Installer" Height="400" Width="600" MinHeight="300" MinWidth="600"
         x:Name="MainElement">
-    
+    <Window.Resources>
+        <Style x:Key="EmptyDevicesStyle">
+            <Style.Triggers>
+                <DataTrigger  Binding="{Binding ElementName=DeviceList, Path=HasItems}" Value="true">
+                    <Setter Property="Label.Visibility" Value="Hidden"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <UserControl Margin="35,10" Content="{Binding Message}"/>
-        <UserControl Margin="35, 10" Content="{Binding CancellableMessageDialog}"/>
-        <StackPanel Panel.ZIndex="-1" VerticalAlignment="Center">
-            <TextBox FontFamily="Helvetica" FontSize="15" Margin="40, 40, 40, 0" BorderBrush="Black" BorderThickness="4" Text="{Binding Path=BuildPath}"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Browse" Margin="20" Height="30" Padding="5" Command="{Binding Path=OpenFileCommand}"/>
-                <Button Content="Install" Margin="20" Height="30" Padding="5" Command="{Binding Path=InstallBuildCommand}"/>
-            </StackPanel>
-            <ProgressBar Value="{Binding Path=BuildProgress}" Height="20" Margin="30,0,30, 0">
-                <ProgressBar.Style>
-                    <Style TargetType="ProgressBar">
-                        <Style.Triggers>
-                            <Trigger Property="Value" Value="0">
-                                <Setter Property="Visibility" Value="Hidden"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ProgressBar.Style>
-            </ProgressBar>
-            <TextBlock Margin="30,0,30, 40" Text="{Binding Path=ProgressMessage}"/>
-        </StackPanel>
+        
+        <!-- Maybe move this to devices view model -->
+        <ListView 
+            x:Name="DeviceList"
+            SelectionMode="Single" 
+            HorizontalAlignment="Center" 
+            BorderThickness="0"
+            ItemsSource="{Binding Path=DevicesViewModel.AndroidDeviceViewModels}">
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            
+        </ListView>
+
+        <Label HorizontalAlignment="Center" 
+               VerticalAlignment="Center" 
+               FontSize="15" 
+               Style="{StaticResource EmptyDevicesStyle}" 
+               Content="No Android device with usb debugging detected."/>
     </Grid>
 </Window>

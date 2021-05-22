@@ -31,12 +31,13 @@ namespace Build_Installer.ViewModels
 
         public ICommand ClearMessageCommand { get; private set; }
 
-        public MessageDialogVM()
+        public MessageDialogVM(string message)
         {
             ClearMessageCommand = new RelayCommand(() =>
             {
                 Message = string.Empty;
             });
+            Message = message;
         }
     }
 }

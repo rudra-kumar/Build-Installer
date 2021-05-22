@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="Build_Installer.AndroidDeviceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Build_Installer"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="300" AllowDrop="True"
+             DragOver="UserControl_DragOver"
+             Drop="UserControl_Drop">
+
+    <UserControl.Resources>
+        <ContextMenu x:Key="DeviceContextMenu">
+            <MenuItem Header="Install Build" Command="{Binding BrowseAndInstallBuild}" CommandParameter=""/>
+        </ContextMenu>
+    </UserControl.Resources>
+    
+    <Grid ContextMenu="{StaticResource DeviceContextMenu}">
+        <DockPanel Margin="35, 10">
+            <TextBlock DockPanel.Dock="Top" TextAlignment="Center" VerticalAlignment="Center" FontSize="15" Text="{Binding Path=MetaData.Model}" />
+            <ProgressBar DockPanel.Dock="Bottom" Value="{Binding Path=BuildProgress}" Height="20" Margin="30,0,30, 0">
+                <ProgressBar.Style>
+                    <Style TargetType="ProgressBar">
+                        <Style.Triggers>
+                            <Trigger Property="Value" Value="0">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ProgressBar.Style>
+            </ProgressBar>
+            <TextBlock DockPanel.Dock="Bottom" Margin="30,0,30, 0" Text="{Binding Path=ProgressMessage, TargetNullValue=''}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <Image MaxHeight="200" RenderOptions.BitmapScalingMode="Linear" Source="Assets/android_phone.png "/>
+        </DockPanel>
+        <ContentControl Margin="35,10" Content="{Binding DialogVM}"/>
+    </Grid>
+</UserControl>

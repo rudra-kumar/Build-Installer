@@ -15,7 +15,13 @@
             <DataTemplate DataType="{x:Type vm:CancellableMessageDialogVM}">
                 <local:CancellableMessageDialog />
             </DataTemplate>
-                
+
+            <DataTemplate DataType="{x:Type vm:AndroidDeviceViewModel}">
+                <local:AndroidDeviceView />
+            </DataTemplate>
+
+            <!--Empty style present so that the data templates are picked up, investigate why data tempaltes are not picked up
+                in app.xaml in the absence of a style-->
             <Style TargetType="Button" />
         </ResourceDictionary>
     </Application.Resources>

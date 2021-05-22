@@ -1,41 +1,33 @@
-﻿using LoggingLibrary;
+﻿using Build_Installer.Commands;
+using Build_Installer.Models;
+using LoggingLibrary;
+using SharpAdbClient;
+using SharpAdbClient.DeviceCommands;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Build_Installer.Models;
-using SharpAdbClient;
-using System.Linq;
-using SharpAdbClient.DeviceCommands;
-using System.IO;
-using System.Net;
 
-namespace Build_Installer.Commands
+namespace Build_Installer
 {
-    class ProgressChangedEventArgs : EventArgs
-    {
-        public int Progress;
-        public string Description;
-
-        public ProgressChangedEventArgs(int progress, string description)
-        {
-            Progress = progress;
-            Description = description;
-        }
-    }
-    class InstallationService : IProgress<int>
+    class AndroidBuildInstaller : IProgress<int>
     {
         public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
         private Func<string, Task<bool>> _userPromptHandler;
-        
+        private IAdbClient _adbClient;
 
-        public InstallationService(Func<string, Task<bool>> userPromptHandler)
+        public AndroidBuildInstaller(Func<string, Task<bool>> userPromptHandler)
         {
+            _adbClient = InstallationService.AdbClient;
             _userPromptHandler = userPromptHandler;
         }
 
-        public async Task InstallBuild(string buildPath)
+        public async Task InstallBuild(string buildPath, DeviceData device)
         {
             if (buildPath == null || !buildPath.EndsWith(".apk"))
                 throw new Exception("Only Installing APK builds are supported");
@@ -45,21 +37,10 @@ namespace Build_Installer.Commands
             command.Execute(null);
             InstallationPackageInfo installationPackage = InstallationPackageInfo.ParseAndroid(command.Output);
 
-            // check if this package is installed and is the same version or lower
-
-            //var installApkCommand = new InstallAPK(buildPath);
-            //installApkCommand.Execute(buildPath);
-            var adbClient = new AdbClient();
-            List<DeviceData> connectedDevices = adbClient.GetDevices();
-            
-            if (connectedDevices.Count < 1)
-                throw new Exception("No connected devices found");
-
             ProgressChanged.Invoke(this, new ProgressChangedEventArgs(20, "Checking If build is already installed"));
-            DeviceData device = connectedDevices.First();
-            var packageManager = new PackageManager(adbClient, device);
+            var packageManager = new PackageManager(_adbClient, device);
             bool reinstall = false;
-            if(packageManager.Packages.ContainsKey(installationPackage.PackageName))
+            if (packageManager.Packages.ContainsKey(installationPackage.PackageName))
             {
                 if (_userPromptHandler != null)
                 {
@@ -79,7 +60,7 @@ namespace Build_Installer.Commands
             FileInfo[] buildDirectoryFiles = buildDirectory.GetFiles();
             IEnumerable<FileInfo> obbFiles = buildDirectoryFiles.Where(fileinfo => fileinfo.Extension == ".obb");
             bool copyObbFiles = false;
-            if(obbFiles.Count() > 0)
+            if (obbFiles.Count() > 0)
             {
                 var expansionFilesFoundMessage = new StringBuilder();
                 expansionFilesFoundMessage.AppendLine("Apk expansion files found: ");
@@ -91,13 +72,13 @@ namespace Build_Installer.Commands
                 copyObbFiles = await _userPromptHandler?.Invoke($"Apk Expansion Files Found: {expansionFilesFoundMessage}");
             }
 
-            if(copyObbFiles)
+            if (copyObbFiles)
             {
                 foreach (var obbFile in obbFiles)
                 {
                     using (var syncService = new SyncService(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)), device))
                     {
-                        using(var obbStream = File.OpenRead(obbFile.FullName))
+                        using (var obbStream = File.OpenRead(obbFile.FullName))
                         {
                             // OBB file name is build by {main/patch}.{versioncode}.{packagename}.obb
                             string fileNamePrefix = obbFile.Name.Split('.').First();
@@ -107,7 +88,7 @@ namespace Build_Installer.Commands
                             string targetFileName = $"{fileNamePrefix}.{versionCode}.{packageName}.obb";
                             // Create direcotry on android device if it doesn't exist
                             var adbShellOutputReciever = new ConsoleOutputReceiver();
-                            adbClient.ExecuteShellCommand(device, $"mkdir -p {targetDirectory}", adbShellOutputReciever);
+                            _adbClient.ExecuteShellCommand(device, $"mkdir -p {targetDirectory}", adbShellOutputReciever);
                             LoggingService.Logger.Info($"Device mkdir output: {adbShellOutputReciever}");
                             syncService.Push(obbStream, $"{targetDirectory}/{targetFileName}", 666, DateTime.Now, this, CancellationToken.None);
                         }

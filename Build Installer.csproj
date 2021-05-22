@@ -33,6 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\android_phone.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Exceptions\" />
     <Folder Include="Views\" />
   </ItemGroup>
@@ -40,6 +44,10 @@
   <ItemGroup>
     <ProjectReference Include="LoggingLibrary\LoggingLibrary.csproj" />
     <ProjectReference Include="madb\SharpAdbClient\SharpAdbClient.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\android_phone.png" />
   </ItemGroup>
 
   <ItemGroup>
