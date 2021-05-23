@@ -12,7 +12,7 @@ namespace BuildInstallerTests
         [TestMethod]
         public void MessageDialogTest()
         {
-            var messageDialogViewModel = new MessageDialogVM();
+            var messageDialogViewModel = new MessageDialogVM(string.Empty);
             Assert.IsFalse(messageDialogViewModel.IsVisible, "Message dialog box should not be visible when initialised");
             messageDialogViewModel.Message = "Some message";
             Assert.IsTrue(messageDialogViewModel.IsVisible, "Message dialog box should become visibile when there is a message to show");

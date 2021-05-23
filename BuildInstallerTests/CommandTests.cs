@@ -31,15 +31,6 @@ namespace BuildInstallerTests
             Assert.IsTrue(cmdCommand.Output.Contains("hello world"));
         }
 
-        
-
-        [TestMethod]
-        public void InstallApkTest()
-        {
-            InstallAPK installAPKCommand = new InstallAPK(@"C:\Users\rudra\Downloads\QuickShortcutMaker_v2.4.0_apkpure.com.apk");
-            installAPKCommand.Execute(null);
-        }
-
         [TestMethod]
         public void JreTest()
         {

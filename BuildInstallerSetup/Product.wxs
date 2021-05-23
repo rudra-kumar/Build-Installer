@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="Build Installer" Language="1033" Version="0.0.3" Manufacturer="Rudra" UpgradeCode="40a1a09d-e02e-4dca-ac47-cf141668b363">
+	<Product Id="*" Name="Build Installer" Language="1033" Version="0.0.4" Manufacturer="Rudra" UpgradeCode="40a1a09d-e02e-4dca-ac47-cf141668b363">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64"/>
 
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+   <Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
+   <Upgrade Id="40a1a09d-e02e-4dca-ac47-cf141668b363">
+     <UpgradeVersion Minimum="0.0.1" Maximum="0.0.4" IncludeMinimum="yes"  Property="PREVIOUSVERSIONSINSTALLED" IncludeMaximum="no" />
+   </Upgrade>
+    
+		<MajorUpgrade AllowSameVersionUpgrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 		<MediaTemplate />
 
 		<Feature Id="ProductFeature" Title="BuildInstallerSetup" Level="1">
